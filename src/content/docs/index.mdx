@@ -1,0 +1,59 @@
+---
+title: MerlionOS
+description: A Singapore-inspired AI-native hobby operating system written in Rust for x86_64.
+template: splash
+hero:
+  tagline: Born for AI. Built by AI. — A hobby OS kernel written in Rust for x86_64.
+  actions:
+    - text: Get Started
+      link: /getting-started/introduction/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/MerlionOS/merlion-kernel
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Why MerlionOS?
+
+<CardGrid stagger>
+  <Card title="Written in Rust" icon="seti:rust">
+    Memory-safe kernel with zero undefined behavior. No C, no compromises.
+  </Card>
+  <Card title="AI-Native Architecture" icon="star">
+    Natural language shell, LLM proxy, semantic VFS, and self-healing built into the kernel.
+  </Card>
+  <Card title="46 Modules, ~7400 Lines" icon="document">
+    Compact yet comprehensive: memory management, multitasking, SMP, filesystem, networking, and more.
+  </Card>
+  <Card title="75+ Shell Commands" icon="laptop">
+    A rich interactive environment with process management, file operations, and system diagnostics.
+  </Card>
+</CardGrid>
+
+## At a Glance
+
+- **Preemptive multitasking** with per-process page tables
+- **SMP support** up to 16 CPUs
+- **Virtual filesystem** with /dev, /proc, /tmp
+- **IPC** via channel-based message passing
+- **Syscall ABI** (int 0x80) with write, exit, yield, getpid, sleep, send, recv
+- **ACPI** power management (shutdown, reboot)
+- **PCI** bus enumeration
+- **Networking** stack: IPv4, UDP, loopback, ARP, ICMP
+
+## Quick Start
+
+```sh
+# Prerequisites: Rust nightly + QEMU
+rustup component add rust-src llvm-tools --toolchain nightly
+cargo install bootimage
+brew install qemu  # macOS
+
+# Build and run
+git clone https://github.com/MerlionOS/merlion-kernel.git
+cd merlion-kernel
+make run
+```
