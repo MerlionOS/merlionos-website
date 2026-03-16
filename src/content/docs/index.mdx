@@ -18,18 +18,18 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 
 ## Why MerlionOS?
 
-<CardGrid stagger>
+<CardGrid>
   <Card title="Written in Rust" icon="seti:rust">
     Memory-safe kernel with zero undefined behavior. No C, no compromises.
   </Card>
   <Card title="AI-Native Architecture" icon="star">
-    NL shell, neural network inference, ML training, vector store, AI workflows, and self-evolution built into the kernel.
+    NL shell, neural net inference, ML training, vector store, AI workflows, and self-evolution built into the kernel.
   </Card>
-  <Card title="223 Modules, 65K Lines" icon="document">
-    Comprehensive kernel: memory management, multitasking, SMP, filesystems, TCP/IP networking, servers, GPU, audio, GUI, and more.
+  <Card title="243 Modules, 82K Lines" icon="document">
+    Comprehensive kernel: memory, multitasking, SMP, filesystems, TCP/IP, servers, GPU, audio, GUI, WiFi, Bluetooth, and more.
   </Card>
-  <Card title="298 Shell Commands" icon="laptop">
-    A rich interactive environment with process management, file operations, networking tools, and system diagnostics.
+  <Card title="358 Shell Commands" icon="laptop">
+    Rich interactive environment: vim, bash/zsh, ss, nc, ip, systemctl, traceroute, sysctl, and full Linux-style tooling.
   </Card>
 </CardGrid>
 
@@ -44,7 +44,8 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 - **Security**: Capabilities, seccomp, ACLs, AES-128, RSA, X.509
 - **Hardware**: PCI, USB (xHCI), Bluetooth, e1000e NIC, ACPI power management
 - **Languages**: Forth, Lisp, WASM/WASI runtime, shell scripting
-- **60 releases** from v1 through v60
+- **UEFI boot** via Limine — runs on real hardware
+- **77 releases** from v1 through v77
 
 ## Quick Start
 
