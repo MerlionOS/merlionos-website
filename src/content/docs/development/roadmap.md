@@ -109,3 +109,46 @@ v60    65,074 lines    — full OS platform
 - Multi-user login sessions
 - System installer
 - RISC-V port
+
+## Future: v78-v100
+
+### Phase 1: Real Hardware (v78-v82)
+- Hardware compatibility (USB keyboard, multiple NICs, SATA auto-detect)
+- Framebuffer display system with font rendering
+- USB mouse, touchpad, keyboard layout switching
+- USB mass storage, NTFS read-only, auto-mount
+- ACPI S3 sleep/wake, real CPU frequency scaling, battery readout
+
+### Phase 2: User Experience (v83-v87)
+- Wayland-inspired window compositor with taskbar
+- GPU-accelerated terminal emulator with Unicode
+- Graphical file manager and network manager
+- Unified system settings application
+
+### Phase 3: Application Ecosystem (v88-v92)
+- Simple HTML/CSS web browser
+- Email client (SMTP/IMAP)
+- Music player with real HDA audio output
+- Enhanced development environment (vim + debugger)
+- Network-enabled package manager
+
+### Phase 4: System Maturity (v93-v97)
+- PAM authentication, per-user encryption
+- OCI-compatible container runtime
+- KVM-like virtualization (VT-x)
+- NFS client, performance optimization
+
+### Phase 5: AI Evolution (v98-v100)
+- Local LLM inference (INT4/INT8 quantized, <1B params)
+- AI-driven system administration
+- **v100: Self-hosting** — MerlionOS compiles itself
+
+### Growth Projection
+```
+v77     82K lines    — current
+v82     95K lines    — real hardware
+v87    115K lines    — user experience
+v92    140K lines    — applications
+v97    170K lines    — system maturity
+v100   200K lines    — self-hosting
+```
