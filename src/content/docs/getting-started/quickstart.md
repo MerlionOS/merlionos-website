@@ -41,3 +41,7 @@ cat /proc/meminfo  # Heap statistics
 spawn         # Spawn a demo task
 neofetch      # System info display
 ```
+
+## Real Hardware
+
+Want to boot MerlionOS on your laptop? See the [UEFI Boot & Real Hardware](/getting-started/uefi-boot/) guide.

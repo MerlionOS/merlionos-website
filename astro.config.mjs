@@ -24,6 +24,7 @@ export default defineConfig({
                     { label: 'Introduction', slug: 'getting-started/introduction' },
                     { label: 'Quick Start', slug: 'getting-started/quickstart' },
                     { label: 'Building from Source', slug: 'getting-started/building' },
+                    { label: 'UEFI Boot & Real Hardware', slug: 'getting-started/uefi-boot' },
                 ],
             },
             {
