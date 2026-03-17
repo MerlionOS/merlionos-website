@@ -1,0 +1,179 @@
+---
+title: API Reference
+description: OpenAI-compatible API endpoints served by MerlionOS Inference.
+---
+
+MerlionOS Inference exposes an **OpenAI-compatible API**, so any client that works with the OpenAI API works with MerlionOS Inference.
+
+## Start the Server
+
+```bash
+# In the MerlionOS shell:
+merlion> ai-serve 8080
+
+# Or configure the port:
+merlion> ai-serve 3000
+```
+
+## Endpoints
+
+### Chat Completions
+
+```
+POST /v1/chat/completions
+```
+
+Generate a chat response from a conversation.
+
+```bash
+curl http://localhost:8080/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "smollm-135m-q4",
+    "messages": [
+      {"role": "system", "content": "You are a helpful assistant."},
+      {"role": "user", "content": "What is Singapore?"}
+    ],
+    "temperature": 0.7,
+    "max_tokens": 256
+  }'
+```
+
+**Response:**
+```json
+{
+  "id": "chatcmpl-merlion",
+  "object": "chat.completion",
+  "choices": [{
+    "index": 0,
+    "message": {
+      "role": "assistant",
+      "content": "Singapore is a city-state..."
+    },
+    "finish_reason": "stop"
+  }],
+  "usage": {
+    "prompt_tokens": 24,
+    "completion_tokens": 64,
+    "total_tokens": 88
+  }
+}
+```
+
+### Text Completions
+
+```
+POST /v1/completions
+```
+
+Generate text from a prompt.
+
+```bash
+curl http://localhost:8080/v1/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "smollm-135m-q4",
+    "prompt": "The capital of France is",
+    "max_tokens": 32,
+    "temperature": 0.0
+  }'
+```
+
+### List Models
+
+```
+GET /v1/models
+```
+
+```bash
+curl http://localhost:8080/v1/models
+```
+
+```json
+{
+  "object": "list",
+  "data": [{
+    "id": "smollm-135m-q4",
+    "object": "model",
+    "owned_by": "merlionos"
+  }]
+}
+```
+
+### Health Check
+
+```
+GET /health
+```
+
+```bash
+curl http://localhost:8080/health
+```
+
+```json
+{
+  "status": "healthy",
+  "uptime_seconds": 42
+}
+```
+
+### Prometheus Metrics
+
+```
+GET /metrics
+```
+
+```bash
+curl http://localhost:8080/metrics
+```
+
+```
+# HELP merlionos_uptime_seconds System uptime
+merlionos_uptime_seconds 42
+# HELP merlionos_heap_used_bytes Heap memory used
+merlionos_heap_used_bytes 131072
+# HELP merlionos_phys_allocated_bytes Physical memory allocated
+merlionos_phys_allocated_bytes 4194304
+```
+
+## Client Compatibility
+
+The API is compatible with:
+
+- **OpenAI Python SDK** (`openai.ChatCompletion.create()`)
+- **LangChain** (set `base_url` to MerlionOS)
+- **LlamaIndex** (OpenAI-compatible provider)
+- **curl** / **httpie** / any HTTP client
+
+### Python Example
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="http://merlionos-host:8080/v1",
+    api_key="not-needed"  # MerlionOS doesn't require auth
+)
+
+response = client.chat.completions.create(
+    model="smollm-135m-q4",
+    messages=[{"role": "user", "content": "Hello from Python!"}]
+)
+
+print(response.choices[0].message.content)
+```
+
+## QEMU Network Setup
+
+To access the API from the host when running in QEMU:
+
+```bash
+# Forward host port 8080 to QEMU guest port 8080
+make run-net
+# or manually:
+qemu-system-x86_64 ... \
+  -netdev user,id=n0,hostfwd=tcp::8080-:8080 \
+  -device virtio-net-pci,netdev=n0
+```
+
+Then access from the host: `http://localhost:8080/v1/chat/completions`

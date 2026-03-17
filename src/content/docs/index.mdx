@@ -51,16 +51,35 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 - **UEFI boot** via Limine — runs on real hardware
 - **77 releases** from v1 through v77
 
+## Projects
+
+<CardGrid>
+  <Card title="merlion-kernel" icon="seti:rust">
+    General-purpose hobby OS kernel. 253 modules, 4 architectures, 358 shell commands.
+    [Get Started](/getting-started/introduction/) | [GitHub](https://github.com/MerlionOS/merlion-kernel)
+  </Card>
+  <Card title="merlion-infer" icon="star">
+    Bare-metal OS for LLM inference. Zero overhead, OpenAI-compatible API, AMD GPU support.
+    [Learn More](/inference/overview/) | [GitHub](https://github.com/MerlionOS/merlion-infer)
+  </Card>
+</CardGrid>
+
 ## Quick Start
 
-```sh
-# Prerequisites: Rust nightly + QEMU
-rustup component add rust-src llvm-tools --toolchain nightly
-cargo install bootimage
-brew install qemu  # macOS
+### merlion-kernel (General Purpose)
 
-# Build and run
+```sh
 git clone https://github.com/MerlionOS/merlion-kernel.git
 cd merlion-kernel
 make run
+```
+
+### merlion-infer (Inference Server)
+
+```sh
+git clone https://github.com/MerlionOS/merlion-infer.git
+cd merlion-infer
+./tools/download_model.sh  # Download SmolLM-135M
+make run-full              # Boot with disk + network
+# merlion> ai-serve 8080   # Start OpenAI API
 ```

@@ -37,6 +37,14 @@ export default defineConfig({
                 ],
             },
             {
+                label: 'MerlionOS Inference',
+                items: [
+                    { label: 'Overview', slug: 'inference/overview' },
+                    { label: 'Architecture', slug: 'inference/architecture' },
+                    { label: 'API Reference', slug: 'inference/api' },
+                ],
+            },
+            {
                 label: 'Development',
                 items: [
                     { label: 'Contributing', slug: 'development/contributing' },

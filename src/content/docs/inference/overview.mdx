@@ -1,0 +1,98 @@
+---
+title: MerlionOS Inference
+description: A bare-metal OS purpose-built for LLM inference. Zero overhead. Maximum throughput.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+**MerlionOS Inference** is a from-scratch operating system that does exactly one thing: serve LLM inference as fast as the hardware allows.
+
+No scheduler overhead, no syscall boundary, no unnecessary abstractions. Boot in under 5 seconds, load a model, serve an OpenAI-compatible API.
+
+## Why a dedicated inference OS?
+
+Linux is a general-purpose OS. When running LLM inference, you pay for that generality:
+
+- **10-20% throughput loss** from kernel/user transitions, page faults, TLB shootdowns
+- **3-5x P99/P50 latency ratio** from scheduler jitter, interrupt storms, GC pauses
+- **30-60 second boot time** before first inference
+
+MerlionOS Inference eliminates these by construction:
+
+- Everything runs in **kernel mode** — zero syscall overhead
+- All memory **pre-allocated with huge pages** — zero page faults
+- **Static core assignment** — zero scheduler jitter
+- **Polling instead of interrupts** on hot path — deterministic latency
+
+## Key Features
+
+<CardGrid>
+  <Card title="OpenAI-Compatible API" icon="star">
+    Drop-in replacement for any OpenAI client. POST /v1/chat/completions with streaming SSE support.
+  </Card>
+  <Card title="GGUF Model Support" icon="document">
+    Load quantized models (Q4_0, Q8_0) directly. Supports Llama, SmolLM, and compatible architectures.
+  </Card>
+  <Card title="AVX2/AVX-512 Kernels" icon="setting">
+    Hand-optimized SIMD kernels for x86_64. Automatic runtime detection and dispatch.
+  </Card>
+  <Card title="AMD GPU Compute" icon="laptop">
+    Native RDNA3 driver — no ROCm, no Linux, no DRM. Direct hardware access for maximum GPU utilization.
+  </Card>
+</CardGrid>
+
+## Quick Start
+
+```bash
+# Build
+git clone https://github.com/MerlionOS/merlion-infer.git
+cd merlion-infer
+make build
+
+# Download a model
+./tools/download_model.sh
+
+# Run in QEMU with disk + network
+make run-full
+
+# In the shell:
+merlion> ai-load        # Load GGUF model from disk
+merlion> ai Hello       # Generate text
+merlion> ai-serve 8080  # Start OpenAI API server
+```
+
+```bash
+# From any client:
+curl http://localhost:8080/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"model":"smollm-135m","messages":[{"role":"user","content":"Hello"}]}'
+```
+
+## Comparison with merlion-kernel
+
+| | merlion-kernel | merlion-infer |
+|---|---|---|
+| **Purpose** | General-purpose hobby OS | LLM inference server |
+| **Architectures** | x86_64, aarch64, RISC-V, LoongArch | x86_64 only |
+| **User mode** | Ring 3 processes, syscalls | Everything in Ring 0 |
+| **Shell commands** | 358 | ~25 (essentials only) |
+| **Modules** | 253 | ~35 (stripped to minimum) |
+| **Networking** | Full stack (HTTP, SSH, MQTT, ...) | TCP + HTTP (API only) |
+| **GPU** | Software shaders | AMD RDNA3 compute |
+| **Focus** | Feature completeness | Performance per watt |
+
+## Hardware Support
+
+| Component | Supported |
+|---|---|
+| **CPU** | AMD Ryzen 7000/9000, Intel 12th gen+ (AVX2 required) |
+| **GPU** | AMD Radeon RX 7000 series (RDNA3) |
+| **RAM** | DDR5, 32GB+ recommended |
+| **Storage** | NVMe SSD, virtio-blk (QEMU) |
+| **Network** | virtio-net (QEMU), Intel e1000e |
+| **Boot** | UEFI via Limine bootloader |
+
+## Links
+
+- **Source code**: [github.com/MerlionOS/merlion-infer](https://github.com/MerlionOS/merlion-infer)
+- **General-purpose kernel**: [github.com/MerlionOS/merlion-kernel](https://github.com/MerlionOS/merlion-kernel)

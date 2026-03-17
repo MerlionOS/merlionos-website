@@ -1,0 +1,138 @@
+---
+title: Inference Architecture
+description: Technical architecture of the MerlionOS Inference engine.
+---
+
+## System Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   OpenAI-Compatible API                  │
+│              POST /v1/chat/completions                   │
+├─────────────────────────────────────────────────────────┤
+│                    HTTP/1.1 Server                       │
+│              (request parsing, SSE streaming)            │
+├─────────────────────────────────────────────────────────┤
+│                  Inference Scheduler                     │
+│         (continuous batching, prefill/decode split)      │
+├──────────────────────┬──────────────────────────────────┤
+│   CPU Inference      │       GPU Inference               │
+│   (AVX2/AVX-512/AMX) │   (AMD RDNA3 compute)            │
+├──────────────────────┴──────────────────────────────────┤
+│                  KV Cache Manager                        │
+├─────────────────────────────────────────────────────────┤
+│         Memory Manager (bump + huge pages)               │
+├──────────┬──────────┬──────────┬────────────────────────┤
+│  NVMe    │  PCIe    │  Network │   AMD GPU Driver       │
+│  Driver  │  Bus     │  Stack   │   (compute only)       │
+├──────────┴──────────┴──────────┴────────────────────────┤
+│              x86_64 Hardware Abstraction                  │
+│        (GDT, IDT, APIC, SIMD state, SMP)                │
+├─────────────────────────────────────────────────────────┤
+│                  UEFI Boot (Limine)                      │
+└─────────────────────────────────────────────────────────┘
+```
+
+## Source Structure
+
+```
+merlion-infer/src/
+├── main.rs                    # Limine UEFI entry, boot sequence
+├── lib.rs                     # Module declarations
+│
+├── boot/limine.rs             # Limine protocol structures
+│
+├── arch/x86_64/
+│   ├── gdt.rs                 # GDT + TSS (ring 0 only)
+│   ├── idt.rs                 # IDT: exceptions, timer, serial IRQ
+│   ├── serial.rs              # UART 16550 (115200 baud)
+│   ├── timer.rs               # PIT 100 Hz
+│   ├── simd.rs                # SSE/AVX/AVX2/AVX-512/AMX init
+│   ├── smp.rs                 # CPUID detection
+│   └── acpi.rs                # Shutdown/reboot
+│
+├── memory/
+│   ├── phys.rs                # Physical frame allocator (bump)
+│   └── heap.rs                # Kernel heap (4 MiB linked-list)
+│
+├── drivers/
+│   ├── pci.rs                 # PCI bus enumeration
+│   ├── nvme.rs                # NVMe storage driver
+│   ├── virtio_blk.rs          # Virtio block (QEMU)
+│   ├── virtio_net.rs          # Virtio network (QEMU)
+│   └── gpu/                   # AMD GPU driver (Phase 6)
+│       ├── discovery.rs       # PCIe enumeration, BAR mapping
+│       └── vram.rs            # VRAM allocator
+│
+├── net/
+│   ├── mod.rs                 # Ethernet, IPv4, NIC backend
+│   └── tcp.rs                 # TCP state machine
+│
+├── inference/
+│   ├── gguf.rs                # GGUF model file parser
+│   ├── tensor.rs              # Q4_0/Q8_0 quantization, f16
+│   ├── tokenizer.rs           # BPE tokenizer
+│   ├── sampler.rs             # Temperature, top-p, argmax
+│   ├── engine.rs              # Llama forward pass (GQA, KV cache)
+│   ├── generate.rs            # Autoregressive text generation
+│   ├── bench.rs               # Performance measurement
+│   └── kernels/
+│       └── scalar.rs          # Pure Rust math kernels
+│
+├── serving/
+│   ├── http.rs                # HTTP/1.1 server
+│   └── openai_api.rs          # OpenAI-compatible endpoints
+│
+├── log.rs                     # Kernel log ring buffer
+├── config.rs                  # Runtime configuration
+├── watchdog.rs                # Software watchdog timer
+└── shell/mod.rs               # Serial console shell (~25 commands)
+```
+
+## Inference Pipeline
+
+The inference engine implements the **Llama transformer architecture**:
+
+1. **Token Embedding** — look up input token in embedding table
+2. **Transformer Layers** (repeated N times):
+   - RMSNorm on attention input
+   - QKV projection (supports quantized Q4_0 weights)
+   - RoPE positional encoding
+   - Grouped-Query Attention (GQA) with KV cache
+   - Output projection + residual connection
+   - RMSNorm on FFN input
+   - FFN: gate + up projection, SiLU activation, down projection + residual
+3. **Final RMSNorm** + vocabulary projection
+4. **Sampling** (temperature + top-p + argmax)
+
+### Supported Models
+
+Any GGUF model with the Llama architecture:
+- **SmolLM / SmolLM2** (135M - 1.7B)
+- **Llama 2 / Llama 3** (7B - 70B)
+- **Mistral** (7B)
+- **Qwen 2.5** (planned)
+- **Phi-3** (planned)
+
+### Quantization Formats
+
+| Format | Bits/Weight | Memory (1B params) |
+|--------|------------|-------------------|
+| F32    | 32         | 4 GB              |
+| F16    | 16         | 2 GB              |
+| Q8_0   | 8.5        | ~1.1 GB           |
+| Q4_0   | 4.5        | ~0.6 GB           |
+
+## Design Decisions
+
+### Why no Ring 3?
+
+Inference is a single workload. Ring 0-3 transitions cost ~100ns each. For decode (one forward pass per token), there are hundreds of kernel calls per token in a traditional OS. Eliminating this boundary removes measurable latency.
+
+### Why AMD GPU?
+
+AMD's driver stack (amdgpu, ROCm) is fully open source. We can study and reimplement the minimal subset needed for compute dispatch, without reverse engineering proprietary firmware.
+
+### Why GGUF?
+
+Self-describing format: model config + tokenizer + weights in one file. Quantization-native. Every popular model has GGUF versions on Hugging Face. Parseable in ~400 lines of Rust.
