@@ -48,6 +48,7 @@ export default defineConfig({
             {
                 label: 'Development',
                 items: [
+                    { label: 'v100 Announcement', slug: 'development/v100-announcement' },
                     { label: 'Contributing', slug: 'development/contributing' },
                     { label: 'Roadmap', slug: 'development/roadmap' },
                 ],
