@@ -3,7 +3,7 @@ title: Roadmap
 description: MerlionOS development phases and future plans.
 ---
 
-## Completed — v1 through v60
+## Completed — v1 through v77
 
 ### Foundation (v1-v10) — From Zero to Boot
 
@@ -90,6 +90,18 @@ description: MerlionOS development phases and future plans.
 | v59 | POSIX ACLs — per-user/group access control | 64.2K |
 | v60 | Power management — P/C-states, thermal, battery | 65.1K |
 
+### Platform Expansion (v61-v77)
+
+| Version | Focus | Lines |
+|---------|-------|-------|
+| v61-v65 | WiFi, HDA audio, UEFI boot (Limine), vim, bash/zsh | 72K |
+| v66-v70 | cgroups, multi-user, service manager, extended tooling | 78K |
+| v71-v73 | aarch64 port (Raspberry Pi 3/4/5) — UART, GPIO, SD card | 82K |
+| v74-v75 | riscv64 port (SiFive/StarFive) — OpenSBI, PLIC, CLINT | 84K |
+| v76-v77 | loongarch64 port (Loongson 3A5000/6000) — UEFI, EIOINTC | 85.9K |
+
+**Milestone: 4-architecture support** — x86_64, aarch64, riscv64, loongarch64 all boot in QEMU with shared kernel core and per-arch HAL layers. 253 modules, 85,928 lines of Rust.
+
 ## Growth Chart
 
 ```
@@ -99,16 +111,15 @@ v30    44,900 lines    — security, logging, profiling
 v40    48,500 lines    — AI platform, self-evolution
 v50    57,200 lines    — audio, GUI, IPv6, packages
 v60    65,074 lines    — full OS platform
+v70    78,000 lines    — multi-user, service manager
+v77    85,928 lines    — 4-architecture support
 ```
 
 ## Future Directions
 
-- WiFi driver (802.11)
-- Sound card driver (Intel HDA)
-- Real hardware boot (UEFI via Limine)
-- Multi-user login sessions
 - System installer
-- RISC-V port
+- Real hardware validation on all 4 architectures
+- LoongArch SMP support
 
 ## Future: v78-v100
 

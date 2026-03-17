@@ -1,9 +1,9 @@
 ---
 title: MerlionOS
-description: A Singapore-inspired AI-native hobby operating system written in Rust for x86_64.
+description: A Singapore-inspired AI-native hobby operating system written in Rust for x86_64, aarch64, RISC-V, and LoongArch.
 template: splash
 hero:
-  tagline: Born for AI. Built by AI. — A hobby OS kernel written in Rust for x86_64.
+  tagline: Born for AI. Built by AI. — A hobby OS kernel written in Rust for 4 CPU architectures.
   actions:
     - text: Get Started
       link: /getting-started/introduction/
@@ -25,8 +25,11 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
   <Card title="AI-Native Architecture" icon="star">
     NL shell, neural net inference, ML training, vector store, AI workflows, and self-evolution built into the kernel.
   </Card>
-  <Card title="243 Modules, 82K Lines" icon="document">
+  <Card title="253 Modules, 86K Lines" icon="document">
     Comprehensive kernel: memory, multitasking, SMP, filesystems, TCP/IP, servers, GPU, audio, GUI, WiFi, Bluetooth, and more.
+  </Card>
+  <Card title="4 CPU Architectures" icon="setting">
+    Runs on x86_64, aarch64 (Raspberry Pi), RISC-V, and LoongArch — with shared kernel core and per-arch HAL.
   </Card>
   <Card title="358 Shell Commands" icon="laptop">
     Rich interactive environment: vim, bash/zsh, ss, nc, ip, systemctl, traceroute, sysctl, and full Linux-style tooling.
@@ -44,6 +47,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 - **Security**: Capabilities, seccomp, ACLs, AES-128, RSA, X.509
 - **Hardware**: PCI, USB (xHCI), Bluetooth, e1000e NIC, ACPI power management
 - **Languages**: Forth, Lisp, WASM/WASI runtime, shell scripting
+- **Multi-architecture**: x86_64, aarch64 (ARM), riscv64 (RISC-V), loongarch64 (LoongArch)
 - **UEFI boot** via Limine — runs on real hardware
 - **77 releases** from v1 through v77
 

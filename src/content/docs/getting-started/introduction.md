@@ -3,7 +3,7 @@ title: Introduction
 description: What is MerlionOS and why does it exist?
 ---
 
-MerlionOS is a Singapore-inspired AI-native hobby operating system kernel written in Rust for x86_64.
+MerlionOS is a Singapore-inspired AI-native hobby operating system kernel written in Rust for x86_64, aarch64, RISC-V, and LoongArch.
 
 ## Philosophy
 
@@ -32,13 +32,23 @@ MerlionOS explores what an operating system looks like when AI is a first-class 
 | **DevTools** | Kernel debugger, CPU profiler, alloc tracker, syscall stats, fuzzing framework |
 | **Power** | CPU P-states/C-states, thermal management, battery simulation, ACPI events |
 
+## Supported Architectures
+
+| Architecture | Target | Hardware | Build | Test |
+|---|---|---|---|---|
+| x86_64 | Intel/AMD PC | BIOS + UEFI | `make build` / `make iso` | `make run` / `make run-uefi-mac` |
+| aarch64 | Raspberry Pi 3/4/5 | Pi firmware | `make pi` | `make run-pi` |
+| riscv64 | RISC-V (SiFive, StarFive) | OpenSBI | `make riscv` | `make run-riscv` |
+| loongarch64 | Loongson 3A5000/6000 | UEFI | `make loongarch` | `make run-loongarch` |
+
 ## Project Status
 
-- **223 source modules**, 65,000+ lines of Rust
-- **60 releases** (v1 through v60)
-- **298 shell commands**
+- **253 source modules**, 85,928 lines of Rust
+- **77 releases** (v1 through v77)
+- **358 shell commands**
+- **4 CPU architectures** (x86_64, aarch64, riscv64, loongarch64)
 - **Optional microkernel mode** with service isolation and hot-restart
-- Runs on QEMU x86_64; UEFI boot preparation in progress
+- Runs on QEMU; UEFI boot via Limine on real hardware
 - MIT licensed
 
 ## Links

@@ -3,7 +3,7 @@ title: Architecture Overview
 description: High-level architecture of the MerlionOS kernel.
 ---
 
-MerlionOS is a **hybrid kernel** with 223 modules across 65,074 lines of Rust. It runs primarily as a monolithic kernel in ring 0, with an optional microkernel mode (v45) for service isolation and hot-restart.
+MerlionOS is a **hybrid kernel** with 253 modules across 85,928 lines of Rust, supporting four CPU architectures. It runs primarily as a monolithic kernel in ring 0, with an optional microkernel mode (v45) for service isolation and hot-restart.
 
 ## Layer Diagram
 
@@ -34,11 +34,27 @@ MerlionOS is a **hybrid kernel** with 223 modules across 65,074 lines of Rust. I
 │  └───────────┘ └───────────┘ └─────────────┘ │
 ├───────────────────────────────────────────────┤
 │            Hardware Abstraction               │
-│  x86_64: GDT, IDT, APIC, PIT, VGA, FB       │
+│  x86_64:     GDT, IDT, APIC, PIT, VGA, FB   │
+│  aarch64:    GIC, Generic Timer, PL011 UART  │
+│  riscv64:    PLIC, CLINT Timer, SBI console  │
+│  loongarch64: EIOINTC, Stable Timer, UART    │
 │  SMP: up to 16 CPUs, per-CPU state           │
 │  Power: P/C-states, thermal, battery         │
 └───────────────────────────────────────────────┘
 ```
+
+## Supported Architectures
+
+MerlionOS runs on four CPU architectures with a shared kernel core and per-architecture HAL (Hardware Abstraction Layer):
+
+| Architecture | Target Triple | Boot Method | Interrupt Controller | Timer | UART |
+|---|---|---|---|---|---|
+| x86_64 | `x86_64-unknown-none` | BIOS (bootloader 0.9) / UEFI (Limine) | PIC / APIC | PIT / HPET | 16550 COM1 |
+| aarch64 | `aarch64-unknown-none` | Raspberry Pi firmware | GIC (Generic Interrupt Controller) | ARM Generic Timer | PL011 |
+| riscv64 | `riscv64gc-unknown-none-elf` | OpenSBI | PLIC | CLINT | SBI console |
+| loongarch64 | `loongarch64-unknown-none` | UEFI | EIOINTC | Stable Counter | 16550-compatible |
+
+The architecture-independent kernel subsystems (scheduler, VFS, networking, AI, etc.) are shared across all targets. Each architecture provides its own `arch_*` module implementing the HAL traits for interrupts, memory management, timer, and console I/O.
 
 ## Syscall ABI
 
