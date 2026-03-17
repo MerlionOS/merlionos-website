@@ -3,7 +3,7 @@ title: Roadmap
 description: MerlionOS development phases and future plans.
 ---
 
-## Completed — v1 through v77
+## Completed — v1 through v87
 
 ### Foundation (v1-v10) — From Zero to Boot
 
@@ -102,6 +102,34 @@ description: MerlionOS development phases and future plans.
 
 **Milestone: 4-architecture support** — x86_64, aarch64, riscv64, loongarch64 all boot in QEMU with shared kernel core and per-arch HAL layers. 253 modules, 85,928 lines of Rust.
 
+### Phase 1: Real Hardware (v78-v82)
+
+| Version | Focus | Lines |
+|---------|-------|-------|
+| v78-v82 | USB keyboard, multiple NICs, SATA, framebuffer display, font rendering, USB mouse, touchpad, keyboard layouts, USB mass storage, NTFS read-only, auto-mount, ACPI S3 sleep/wake, real CPU frequency scaling, battery readout | ~100K |
+
+### Phase 2: User Experience (v83-v87)
+
+| Version | Focus | Lines |
+|---------|-------|-------|
+| v83-v87 | Window compositor, desktop environment, GPU-accelerated terminal with Unicode, graphical file manager, network manager, unified system settings | ~121K |
+
+### Networking Roadmap (N1-N9) — Completed
+
+| Phase | Focus |
+|-------|-------|
+| N1 | QUIC transport protocol |
+| N2 | HTTP/3 over QUIC |
+| N3 | gRPC framework |
+| N4 | OSPF routing protocol |
+| N5 | BGP routing protocol |
+| N6 | iptables firewall and NAT |
+| N7 | eBPF packet filtering |
+| N8 | DPDK-style fast path |
+| N9 | Network performance testing |
+
+**Milestone: v87** — 330 modules, 121,157 lines of Rust. Window compositor, desktop environment, full networking stack with QUIC/HTTP/3, gRPC, OSPF/BGP, iptables/NAT, eBPF, and DPDK. 450+ shell commands.
+
 ## Growth Chart
 
 ```
@@ -113,6 +141,8 @@ v50    57,200 lines    — audio, GUI, IPv6, packages
 v60    65,074 lines    — full OS platform
 v70    78,000 lines    — multi-user, service manager
 v77    85,928 lines    — 4-architecture support
+v82   ~100,000 lines   — real hardware support
+v87   121,157 lines    — desktop environment, networking roadmap complete
 ```
 
 ## Future Directions
@@ -121,20 +151,7 @@ v77    85,928 lines    — 4-architecture support
 - Real hardware validation on all 4 architectures
 - LoongArch SMP support
 
-## Future: v78-v100
-
-### Phase 1: Real Hardware (v78-v82)
-- Hardware compatibility (USB keyboard, multiple NICs, SATA auto-detect)
-- Framebuffer display system with font rendering
-- USB mouse, touchpad, keyboard layout switching
-- USB mass storage, NTFS read-only, auto-mount
-- ACPI S3 sleep/wake, real CPU frequency scaling, battery readout
-
-### Phase 2: User Experience (v83-v87)
-- Wayland-inspired window compositor with taskbar
-- GPU-accelerated terminal emulator with Unicode
-- Graphical file manager and network manager
-- Unified system settings application
+## Future: v88-v100
 
 ### Phase 3: Application Ecosystem (v88-v92)
 - Simple HTML/CSS web browser
@@ -156,9 +173,8 @@ v77    85,928 lines    — 4-architecture support
 
 ### Growth Projection
 ```
-v77     82K lines    — current
-v82     95K lines    — real hardware
-v87    115K lines    — user experience
+v87    121K lines    — current
+
 v92    140K lines    — applications
 v97    170K lines    — system maturity
 v100   200K lines    — self-hosting

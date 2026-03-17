@@ -18,14 +18,16 @@ MerlionOS explores what an operating system looks like when AI is a first-class 
 | **Memory** | Frame allocator, 4-level page tables, demand paging, slab allocator, heap with leak detection |
 | **Process** | Preemptive multitasking, context switching, per-process page tables, signals, process groups |
 | **Filesystem** | VFS, FAT16, ext2, ext4 (extents/journaling), tmpfs, procfs, sysfs |
-| **Storage** | virtio-blk, AHCI, NVMe, GPT partitions, KV database |
-| **Networking** | TCP (Reno/Cubic/BBR), UDP, IPv4+IPv6, ARP/NDP, DHCP, DNS, HTTP/HTTPS, TLS, WebSocket, MQTT |
+| **Storage** | virtio-blk, AHCI, NVMe, GPT partitions, NTFS read-only, software RAID 0/1/5, KV database |
+| **Networking** | TCP (Reno/Cubic/BBR), UDP, IPv4+IPv6, ARP/NDP, DHCP, DNS, HTTP/HTTPS, TLS, WebSocket, MQTT, QUIC/HTTP/3, gRPC, OSPF/BGP, iptables/NAT, eBPF, DPDK |
 | **Servers** | HTTP server, SSH server, DNS server, MQTT broker, HTTPS reverse proxy |
 | **Security** | Capabilities (14 flags), seccomp, ACLs, file permissions, sudo, AES-128, RSA, X.509 |
 | **AI** | NL shell, neural network inference (INT32), ML training, vector store, AI workflows, self-evolution |
 | **GPU** | Software compute shaders, buffer management, benchmarks |
 | **Audio** | Multi-channel mixer, WAV playback, tone synthesis, MIDI parser |
 | **GUI** | Widget toolkit (10 types), layout engine, dialog system, themes |
+| **Display** | Window compositor, desktop environment, framebuffer terminal |
+| **Input** | USB mouse, keyboard layouts, touchpad |
 | **Hardware** | SMP, APIC, HPET, PCI, USB (xHCI), Bluetooth (HCI/L2CAP), e1000e NIC |
 | **Languages** | Forth, Lisp, WASM/WASI runtime, shell scripting (if/for/while/function) |
 | **Containers** | Process isolation, veth pairs, network bridge, microkernel mode |
@@ -43,9 +45,9 @@ MerlionOS explores what an operating system looks like when AI is a first-class 
 
 ## Project Status
 
-- **253 source modules**, 85,928 lines of Rust
-- **77 releases** (v1 through v77)
-- **358 shell commands**
+- **330 source modules**, 121,000+ lines of Rust
+- **87 releases** (v1 through v87)
+- **450+ shell commands**
 - **4 CPU architectures** (x86_64, aarch64, riscv64, loongarch64)
 - **Optional microkernel mode** with service isolation and hot-restart
 - Runs on QEMU; UEFI boot via Limine on real hardware

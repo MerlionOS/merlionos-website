@@ -3,7 +3,7 @@ title: Architecture Overview
 description: High-level architecture of the MerlionOS kernel.
 ---
 
-MerlionOS is a **hybrid kernel** with 253 modules across 85,928 lines of Rust, supporting four CPU architectures. It runs primarily as a monolithic kernel in ring 0, with an optional microkernel mode (v45) for service isolation and hot-restart.
+MerlionOS is a **hybrid kernel** with 330 modules across 121,000+ lines of Rust, supporting four CPU architectures. It runs primarily as a monolithic kernel in ring 0, with an optional microkernel mode (v45) for service isolation and hot-restart.
 
 ## Layer Diagram
 
@@ -13,7 +13,7 @@ MerlionOS is a **hybrid kernel** with 253 modules across 85,928 lines of Rust, s
 │  ELF binaries, libc, /bin programs            │
 │  Dynamic linker, WASI runtime                 │
 ├───────────────────────────────────────────────┤
-│            Kernel Shell (298 cmds)            │
+│           Kernel Shell (450+ cmds)            │
 │  NL interface, AI agents, scripting engine    │
 ├───────────────────────────────────────────────┤
 │             Kernel Subsystems                 │

@@ -25,13 +25,13 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
   <Card title="AI-Native Architecture" icon="star">
     NL shell, neural net inference, ML training, vector store, AI workflows, and self-evolution built into the kernel.
   </Card>
-  <Card title="253 Modules, 86K Lines" icon="document">
+  <Card title="330 Modules, 121K Lines" icon="document">
     Comprehensive kernel: memory, multitasking, SMP, filesystems, TCP/IP, servers, GPU, audio, GUI, WiFi, Bluetooth, and more.
   </Card>
   <Card title="4 CPU Architectures" icon="setting">
     Runs on x86_64, aarch64 (Raspberry Pi), RISC-V, and LoongArch — with shared kernel core and per-arch HAL.
   </Card>
-  <Card title="358 Shell Commands" icon="laptop">
+  <Card title="450+ Shell Commands" icon="laptop">
     Rich interactive environment: vim, bash/zsh, ss, nc, ip, systemctl, traceroute, sysctl, and full Linux-style tooling.
   </Card>
 </CardGrid>
@@ -41,21 +41,23 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 - **Preemptive multitasking** with per-process page tables, signals, and process groups
 - **SMP support** with APIC, HPET timers
 - **Filesystems**: VFS, FAT16, ext2, ext4, tmpfs, procfs, sysfs
-- **Storage**: virtio-blk, AHCI, NVMe, GPT partitions
-- **Networking**: TCP (Reno/Cubic/BBR), UDP, IPv4+IPv6, DHCP, DNS, TLS, WebSocket, MQTT
+- **Storage**: virtio-blk, AHCI, NVMe, GPT, NTFS read-only, software RAID 0/1/5
+- **Networking**: TCP (Reno/Cubic/BBR), UDP, IPv4+IPv6, DHCP, DNS, TLS, WebSocket, MQTT, QUIC/HTTP/3, gRPC, OSPF/BGP, iptables/NAT, eBPF, DPDK
 - **Servers**: HTTP, SSH, DNS, MQTT broker, HTTPS reverse proxy
 - **Security**: Capabilities, seccomp, ACLs, AES-128, RSA, X.509
-- **Hardware**: PCI, USB (xHCI), Bluetooth, e1000e NIC, ACPI power management
+- **Display**: Window compositor, desktop environment, framebuffer terminal
+- **Input**: USB mouse, keyboard layouts, touchpad
+- **Hardware**: PCI, USB (xHCI), Bluetooth, e1000e NIC, ACPI power management, S3 sleep/wake
 - **Languages**: Forth, Lisp, WASM/WASI runtime, shell scripting
 - **Multi-architecture**: x86_64, aarch64 (ARM), riscv64 (RISC-V), loongarch64 (LoongArch)
 - **UEFI boot** via Limine — runs on real hardware
-- **77 releases** from v1 through v77
+- **87 releases** from v1 through v87
 
 ## Projects
 
 <CardGrid>
   <Card title="merlion-kernel" icon="seti:rust">
-    General-purpose hobby OS kernel. 253 modules, 4 architectures, 358 shell commands.
+    General-purpose hobby OS kernel. 330 modules, 4 architectures, 450+ shell commands.
     [Get Started](/getting-started/introduction/) | [GitHub](https://github.com/MerlionOS/merlion-kernel)
   </Card>
   <Card title="merlion-infer" icon="star">
