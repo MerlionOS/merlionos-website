@@ -1,0 +1,138 @@
+---
+title: Building a Bare-Metal LLM Inference OS
+description: How we built MerlionOS Inference — a from-scratch operating system for LLM inference, entirely with AI.
+---
+
+What if serving LLMs didn't require Linux at all? What if the operating system itself *was* the inference engine — booting in seconds, running entirely in ring 0, with zero syscall overhead? That's what we set out to build with **MerlionOS Inference**: a bare-metal OS written from scratch in Rust, purpose-built for LLM inference.
+
+## The Problem
+
+Running LLM inference on Linux works, but it comes with baggage. The general-purpose kernel imposes **10-20% overhead** through mechanisms that exist to support workloads we don't care about:
+
+- **Syscall transitions**: Every I/O operation, every memory allocation crosses the user/kernel boundary. For inference, where you're doing millions of tensor operations per second, this adds up.
+- **Page faults and TLB shootdowns**: Linux's virtual memory system is designed for multi-process isolation. An inference server doesn't need that — it needs one process with direct access to model weights and scratch buffers.
+- **Scheduler jitter**: The CFS scheduler is fair, but fairness introduces latency variance. When you're serving real-time inference, predictable latency matters more than fairness.
+- **Boot time**: A typical Linux server takes 30-60 seconds to boot before it can serve its first token. In an autoscaling scenario, that's an eternity.
+
+The insight: an LLM inference server has a remarkably narrow set of requirements. It needs to boot, load a model into memory, run matrix multiplications, and serve an HTTP API. That's it. What if we built an OS that does *only* that?
+
+## Architecture Decisions
+
+Every design choice in MerlionOS Inference optimizes for one thing: getting tokens out as fast as possible.
+
+**Everything runs in ring 0.** There is no user/kernel split. The inference engine, the network stack, the API server — they all run at the highest privilege level. This eliminates syscall overhead entirely. A tensor operation is just a function call, not a privilege level transition.
+
+**Limine UEFI boot** gets us from power-on to a running kernel in about 2 seconds. No GRUB, no initramfs, no systemd. The bootloader hands off to our kernel entry point with memory mapped, UEFI services available, and nothing else.
+
+**Rust `no_std`** gives us memory safety without a runtime. No standard library, no allocator by default, no threads — just bare metal with the compiler watching our backs. We bring our own allocator, our own panic handler, our own everything.
+
+**x86_64 only.** We target server hardware with AVX2 and AVX-512 support. No need for portability — we want to use every SIMD instruction the CPU offers for matrix math.
+
+**No filesystem.** The GGUF model file is loaded as raw sectors from a virtio-blk device. No ext4, no VFS layer, no page cache. Just DMA straight into our model buffer.
+
+**Serial console only.** This is a headless inference server. No framebuffer driver, no GPU console, no keyboard driver. Serial in, serial out, plus a network stack for the API.
+
+## What We Built
+
+The entire OS was built in seven phases over the course of development, each adding a distinct capability layer:
+
+| Phase | What | Lines Added |
+|-------|------|-------------|
+| **Phase 1** | Boot skeleton — GDT, IDT, SIMD init, heap allocator, serial shell | 1,126 |
+| **Phase 2** | Virtio-blk storage driver + GGUF model parser | 1,291 |
+| **Phase 3** | CPU inference engine — Llama architecture, RMSNorm, RoPE, attention, FFN | 980 |
+| **Phase 4** | Virtio-net driver + TCP/IP stack + OpenAI-compatible API server | 976 |
+| **Phase 5-7** | GPU driver skeleton, benchmarks, production hardening | 600 |
+
+**Total: approximately 5,000 lines of Rust across 34 source files.** That's the entire operating system — boot, drivers, inference, networking, and API — in less code than most web applications.
+
+## Key Technical Challenges
+
+Building on bare metal means there's no safety net. Here are the hardest bugs we hit and how we solved them.
+
+### 1. GDT Data Segments and the Double Fault Mystery
+
+When we first tried to initialize the heap allocator, the kernel triple-faulted. No error message, no panic handler — just a reboot.
+
+The root cause: **Limine leaves stale segment registers** after handoff. The bootloader sets up its own GDT with its own segment layout, then jumps to our kernel. Our initial GDT only had a code segment and a TSS. When the heap allocator tried to write to memory, the CPU used the stale DS register pointing to a now-invalid segment descriptor.
+
+The fix was to add a proper **kernel data segment** to our GDT and explicitly reload DS, ES, and SS after loading the new GDT:
+
+```rust
+// After loading our GDT, we must fix the stale segment registers
+// left behind by the Limine bootloader
+unsafe {
+    asm!(
+        "mov {0:r}, 0x10",  // Kernel data segment selector
+        "mov ds, {0:r}",
+        "mov es, {0:r}",
+        "mov ss, {0:r}",
+        out(reg) _,
+    );
+}
+```
+
+This is the kind of bug that doesn't exist in user-space programming. On bare metal, every register matters.
+
+### 2. Virtio-blk Virtqueue Layout Mismatch
+
+Our first attempt at reading from the virtual disk returned garbage data. The virtio-blk driver appeared to work — it negotiated features, set up the virtqueue, submitted requests — but the data was wrong.
+
+The problem: the **device's queue size** (256 entries) didn't match our **driver's assumption** (16 entries). The virtio spec says the device reports its maximum queue size, and the driver must allocate descriptor tables, available rings, and used rings to match. We were allocating memory for 16 entries but the device was writing to offsets calculated for 256.
+
+The fix: query the device's `queue_size` register and allocate all virtqueue memory dynamically based on the reported value. Sounds obvious in retrospect — but when your "debugger" is a serial port printing hex values, finding the mismatch took real detective work.
+
+### 3. GGUF Binary Format Parsing
+
+GGUF is the standard format for quantized LLM models, but parsing it on bare metal — with no standard library, no file abstraction, and no error recovery — exposed several subtle issues:
+
+- **Magic byte order**: The GGUF magic number (`0x46475547`) must be checked in little-endian, which is natural on x86 but easy to get wrong when reading raw bytes.
+- **Array count field sizes**: Some metadata fields use `u32` counts while others use `u64`. Getting this wrong means every subsequent field parse is offset incorrectly, and the error cascades silently.
+
+The fix was careful **binary format validation** at every step — checking magic bytes, verifying version numbers, and validating field sizes before advancing the read pointer.
+
+### 4. QEMU TCG Performance on macOS ARM
+
+Our development environment is macOS on Apple Silicon, but MerlionOS targets x86_64. That means QEMU runs in **TCG (Tiny Code Generator) mode** — full software emulation of x86 on ARM. This is roughly **100x slower than native execution**.
+
+This created a practical problem: loading even a small model from the virtual disk took minutes, because every virtio DMA operation went through emulated MMIO.
+
+The fix was a **two-phase loading strategy**: first, read just the GGUF header (a single sector) to determine the exact model size. Then, read exactly that many sectors — no more. Combined with single-sector reads (which are more reliable under TCG), this brought load times from minutes to milliseconds for test models.
+
+## Results
+
+On QEMU TCG (macOS ARM host emulating x86_64 guest) with a tiny test model (dim=32, 109 KiB GGUF):
+
+| Metric | Value |
+|--------|-------|
+| Boot to shell | ~2 seconds |
+| Model load (109 KiB from disk) | 3 ticks (&lt;30ms) |
+| Prefill throughput | 16.8 tok/s |
+| Decode throughput | 14.3 tok/s |
+| Peak memory usage | 175 KiB |
+| API compatibility | OpenAI `/v1/chat/completions` |
+
+These numbers are from *emulated* x86 on ARM. On native x86_64 hardware with AVX2, we expect orders-of-magnitude improvements. The architecture is designed so that the inference hot loop — matrix multiplications, attention computation, activation functions — can be swapped out for hand-tuned AVX2/AVX-512 kernels without changing anything else in the OS.
+
+The key achievement isn't raw speed (yet) — it's that we have a **complete, working inference server** running on bare metal with no OS underneath it. Boot, load model, serve API. In 5,000 lines of Rust.
+
+## What's Next
+
+The current system proves the architecture works. The next steps are about making it fast on real hardware:
+
+- **Real hardware testing** on AMD Ryzen + RX 7900 XTX — moving from QEMU to actual server hardware.
+- **Native AMD GPU compute driver** — talking to RDNA3 directly via MMIO and ring buffers. No ROCm, no Linux, no driver stack. Just our kernel talking to the GPU.
+- **AVX2/AVX-512 optimized kernels** — hand-tuned SIMD implementations of matrix multiplication and attention for 3x+ speedup over scalar Rust.
+- **Continuous batching scheduler** — serving multiple concurrent requests with dynamic batch assembly, the way production inference servers work.
+
+The long-term vision: an inference appliance OS that boots in seconds, loads a model, and serves tokens — with nothing between the hardware and the math except a thin layer of Rust.
+
+## Links
+
+- **Source code**: [github.com/MerlionOS/merlion-infer](https://github.com/MerlionOS/merlion-infer)
+- **Website**: [merlionos.org](https://merlionos.org)
+- **General-purpose kernel**: [github.com/MerlionOS/merlion-kernel](https://github.com/MerlionOS/merlion-kernel)
+
+---
+
+*Built entirely with Claude by Anthropic — from architecture design to every line of code, debugging, and testing.*

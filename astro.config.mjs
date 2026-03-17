@@ -42,6 +42,7 @@ export default defineConfig({
                     { label: 'Overview', slug: 'inference/overview' },
                     { label: 'Architecture', slug: 'inference/architecture' },
                     { label: 'API Reference', slug: 'inference/api' },
+                    { label: 'Building the OS', slug: 'inference/building-bare-metal-inference-os' },
                 ],
             },
             {
