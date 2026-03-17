@@ -3,7 +3,7 @@ title: MerlionOS
 description: A Singapore-inspired AI-native hobby operating system written in Rust for x86_64, aarch64, RISC-V, and LoongArch.
 template: splash
 hero:
-  tagline: Born for AI. Built by AI. — A hobby OS kernel written in Rust for 4 CPU architectures.
+  tagline: "Born for AI. Built by AI. — v100: 132,670 lines of Rust, self-hosting, 4 CPU architectures."
   actions:
     - text: Get Started
       link: /getting-started/introduction/
@@ -25,13 +25,13 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
   <Card title="AI-Native Architecture" icon="star">
     NL shell, neural net inference, ML training, vector store, AI workflows, and self-evolution built into the kernel.
   </Card>
-  <Card title="330 Modules, 121K Lines" icon="document">
+  <Card title="360 Modules, 133K Lines" icon="document">
     Comprehensive kernel: memory, multitasking, SMP, filesystems, TCP/IP, servers, GPU, audio, GUI, WiFi, Bluetooth, and more.
   </Card>
   <Card title="4 CPU Architectures" icon="setting">
     Runs on x86_64, aarch64 (Raspberry Pi), RISC-V, and LoongArch — with shared kernel core and per-arch HAL.
   </Card>
-  <Card title="450+ Shell Commands" icon="laptop">
+  <Card title="480+ Shell Commands" icon="laptop">
     Rich interactive environment: vim, bash/zsh, ss, nc, ip, systemctl, traceroute, sysctl, and full Linux-style tooling.
   </Card>
 </CardGrid>
@@ -51,13 +51,14 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 - **Languages**: Forth, Lisp, WASM/WASI runtime, shell scripting
 - **Multi-architecture**: x86_64, aarch64 (ARM), riscv64 (RISC-V), loongarch64 (LoongArch)
 - **UEFI boot** via Limine — runs on real hardware
-- **87 releases** from v1 through v87
+- **Self-hosting** — Rust subset compiler, x86_64 assembler, ELF linker — the OS can compile itself
+- **100 releases** from v1 through v100
 
 ## Projects
 
 <CardGrid>
   <Card title="merlion-kernel" icon="seti:rust">
-    General-purpose hobby OS kernel. 330 modules, 4 architectures, 450+ shell commands.
+    General-purpose hobby OS kernel. 360 modules, 4 architectures, 480+ shell commands.
     [Get Started](/getting-started/introduction/) | [GitHub](https://github.com/MerlionOS/merlion-kernel)
   </Card>
   <Card title="merlion-infer" icon="star">

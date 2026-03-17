@@ -3,7 +3,11 @@ title: Roadmap
 description: MerlionOS development phases and future plans.
 ---
 
-## Completed — v1 through v87
+:::note[v100 Reached!]
+MerlionOS has reached **v100** — 132,670 lines of Rust across 360 modules. The OS is now self-hosting: it includes a Rust subset compiler, x86_64 assembler, and ELF linker. Thank you for following this journey from zero to self-hosting!
+:::
+
+## Completed — v1 through v100
 
 ### Foundation (v1-v10) — From Zero to Boot
 
@@ -130,6 +134,28 @@ description: MerlionOS development phases and future plans.
 
 **Milestone: v87** — 330 modules, 121,157 lines of Rust. Window compositor, desktop environment, full networking stack with QUIC/HTTP/3, gRPC, OSPF/BGP, iptables/NAT, eBPF, and DPDK. 450+ shell commands.
 
+### Phase 3: Application Ecosystem (v88-v92) — COMPLETE
+
+| Version | Focus | Lines |
+|---------|-------|-------|
+| v88-v92 | HTML/CSS web browser, email client (SMTP/IMAP), music player, enhanced vim + debugger, network package manager | ~125K |
+
+### Phase 4: System Maturity (v93-v97) — COMPLETE
+
+| Version | Focus | Lines |
+|---------|-------|-------|
+| v93-v97 | PAM authentication, per-user encryption, OCI container runtime, KVM virtualization (VT-x), NFS client, performance optimization | ~129K |
+
+### Phase 5: AI Evolution & Self-Hosting (v98-v100) — COMPLETE
+
+| Version | Focus | Lines |
+|---------|-------|-------|
+| v98 | LLM inference — INT4/INT8 quantized, in-kernel neural network | ~130K |
+| v99 | AI system administration — monitoring, diagnostics, auto-tuning | ~131K |
+| v100 | Self-hosting — Rust subset compiler, x86_64 assembler, ELF linker | 132,670 |
+
+**Milestone: v100** — 360 modules, 132,670 lines of Rust. Self-hosting OS with Rust compiler, assembler, and linker. 480+ shell commands. 100 releases.
+
 ## Growth Chart
 
 ```
@@ -143,39 +169,17 @@ v70    78,000 lines    — multi-user, service manager
 v77    85,928 lines    — 4-architecture support
 v82   ~100,000 lines   — real hardware support
 v87   121,157 lines    — desktop environment, networking roadmap complete
+v92   ~125,000 lines   — application ecosystem
+v97   ~129,000 lines   — system maturity, containers, KVM
+v100  132,670 lines    — SELF-HOSTING! Rust compiler, assembler, linker
 ```
 
-## Future Directions
+## Post-v100 Directions
 
-- System installer
-- Real hardware validation on all 4 architectures
+MerlionOS has reached its v100 milestone. Future work may include:
+
+- Real hardware validation on more machines and all 4 architectures
+- Community contributions and ecosystem growth
+- Expanded self-hosting capabilities (more Rust language features)
 - LoongArch SMP support
-
-## Future: v88-v100
-
-### Phase 3: Application Ecosystem (v88-v92)
-- Simple HTML/CSS web browser
-- Email client (SMTP/IMAP)
-- Music player with real HDA audio output
-- Enhanced development environment (vim + debugger)
-- Network-enabled package manager
-
-### Phase 4: System Maturity (v93-v97)
-- PAM authentication, per-user encryption
-- OCI-compatible container runtime
-- KVM-like virtualization (VT-x)
-- NFS client, performance optimization
-
-### Phase 5: AI Evolution (v98-v100)
-- Local LLM inference (INT4/INT8 quantized, <1B params)
-- AI-driven system administration
-- **v100: Self-hosting** — MerlionOS compiles itself
-
-### Growth Projection
-```
-v87    121K lines    — current
-
-v92    140K lines    — applications
-v97    170K lines    — system maturity
-v100   200K lines    — self-hosting
-```
+- System installer for bare-metal deployment

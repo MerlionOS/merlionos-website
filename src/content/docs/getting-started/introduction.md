@@ -22,7 +22,7 @@ MerlionOS explores what an operating system looks like when AI is a first-class 
 | **Networking** | TCP (Reno/Cubic/BBR), UDP, IPv4+IPv6, ARP/NDP, DHCP, DNS, HTTP/HTTPS, TLS, WebSocket, MQTT, QUIC/HTTP/3, gRPC, OSPF/BGP, iptables/NAT, eBPF, DPDK |
 | **Servers** | HTTP server, SSH server, DNS server, MQTT broker, HTTPS reverse proxy |
 | **Security** | Capabilities (14 flags), seccomp, ACLs, file permissions, sudo, AES-128, RSA, X.509 |
-| **AI** | NL shell, neural network inference (INT32), ML training, vector store, AI workflows, self-evolution |
+| **AI** | NL shell, neural network inference (INT32), ML training, vector store, AI workflows, self-evolution, LLM inference (INT4/INT8), AI system administration, self-hosting compiler |
 | **GPU** | Software compute shaders, buffer management, benchmarks |
 | **Audio** | Multi-channel mixer, WAV playback, tone synthesis, MIDI parser |
 | **GUI** | Widget toolkit (10 types), layout engine, dialog system, themes |
@@ -30,7 +30,8 @@ MerlionOS explores what an operating system looks like when AI is a first-class 
 | **Input** | USB mouse, keyboard layouts, touchpad |
 | **Hardware** | SMP, APIC, HPET, PCI, USB (xHCI), Bluetooth (HCI/L2CAP), e1000e NIC |
 | **Languages** | Forth, Lisp, WASM/WASI runtime, shell scripting (if/for/while/function) |
-| **Containers** | Process isolation, veth pairs, network bridge, microkernel mode |
+| **Containers** | Process isolation, veth pairs, network bridge, microkernel mode, OCI runtime, KVM virtualization |
+| **Self-hosting** | Rust subset compiler, x86_64 assembler, ELF linker |
 | **DevTools** | Kernel debugger, CPU profiler, alloc tracker, syscall stats, fuzzing framework |
 | **Power** | CPU P-states/C-states, thermal management, battery simulation, ACPI events |
 
@@ -45,9 +46,9 @@ MerlionOS explores what an operating system looks like when AI is a first-class 
 
 ## Project Status
 
-- **330 source modules**, 121,000+ lines of Rust
-- **87 releases** (v1 through v87)
-- **450+ shell commands**
+- **360 source modules**, 132,670 lines of Rust
+- **100 releases** (v1 through v100)
+- **480+ shell commands**
 - **4 CPU architectures** (x86_64, aarch64, riscv64, loongarch64)
 - **Optional microkernel mode** with service isolation and hot-restart
 - Runs on QEMU; UEFI boot via Limine on real hardware
