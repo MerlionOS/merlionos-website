@@ -3,8 +3,8 @@ title: Roadmap
 description: MerlionOS development phases and future plans.
 ---
 
-:::note[v100 Reached!]
-MerlionOS has reached **v100** — 132,670 lines of Rust across 360 modules. The OS is now self-hosting: it includes a Rust subset compiler, x86_64 assembler, and ELF linker. Thank you for following this journey from zero to self-hosting!
+:::note[Userspace Milestone Reached!]
+MerlionOS has reached **Ring 3 userspace** — 139,905 lines of Rust across 380 modules with 45 POSIX syscalls. The OS now runs user programs in Ring 3 with full process isolation, ELF loading, and per-process page tables.
 :::
 
 ## Completed — v1 through v100
@@ -156,6 +156,19 @@ MerlionOS has reached **v100** — 132,670 lines of Rust across 360 modules. The
 
 **Milestone: v100** — 360 modules, 132,670 lines of Rust. Self-hosting OS with Rust compiler, assembler, and linker. 480+ shell commands. 100 releases.
 
+### Userspace Milestone (U1) — COMPLETE
+
+| Focus | Details |
+|-------|---------|
+| Ring 3 execution | User programs run in unprivileged Ring 3 with full process isolation |
+| POSIX syscalls | 45 system calls: fork, exec, open, read, write, mmap, signal handling, and more |
+| ELF loader | Load and execute standard ELF binaries in userspace |
+| Per-process page tables | Each process gets isolated virtual address space |
+| Built-in programs | 5 user programs including QFC blockchain miner |
+| GPU drivers | AMD + Intel compute drivers, NVIDIA/Ascend/Cambricon detection |
+
+**Milestone: U1** — 380 modules, 139,905 lines of Rust. Ring 3 userspace with 45 POSIX syscalls, ELF loader, 5 built-in user programs, and QFC blockchain miner running in userspace.
+
 ## Growth Chart
 
 ```
@@ -172,12 +185,14 @@ v87   121,157 lines    — desktop environment, networking roadmap complete
 v92   ~125,000 lines   — application ecosystem
 v97   ~129,000 lines   — system maturity, containers, KVM
 v100  132,670 lines    — SELF-HOSTING! Rust compiler, assembler, linker
+U1    139,905 lines    — RING 3 USERSPACE! 45 syscalls, ELF loader, 5 user programs
 ```
 
 ## Post-v100 Directions
 
-MerlionOS has reached its v100 milestone. Future work may include:
+MerlionOS has reached its v100 milestone and Ring 3 userspace. Future work may include:
 
+- Expanding userspace with more POSIX syscalls and user programs
 - Real hardware validation on more machines and all 4 architectures
 - Community contributions and ecosystem growth
 - Expanded self-hosting capabilities (more Rust language features)

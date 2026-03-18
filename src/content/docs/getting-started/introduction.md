@@ -23,7 +23,8 @@ MerlionOS explores what an operating system looks like when AI is a first-class 
 | **Servers** | HTTP server, SSH server, DNS server, MQTT broker, HTTPS reverse proxy |
 | **Security** | Capabilities (14 flags), seccomp, ACLs, file permissions, sudo, AES-128, RSA, X.509 |
 | **AI** | NL shell, neural network inference (INT32), ML training, vector store, AI workflows, self-evolution, LLM inference (INT4/INT8), AI system administration, self-hosting compiler |
-| **GPU** | Software compute shaders, buffer management, benchmarks |
+| **Userspace** | Ring 3 execution, 45 POSIX syscalls, ELF loader, per-process page tables |
+| **GPU** | AMD + Intel compute drivers, NVIDIA/Ascend/Cambricon detection |
 | **Audio** | Multi-channel mixer, WAV playback, tone synthesis, MIDI parser |
 | **GUI** | Widget toolkit (10 types), layout engine, dialog system, themes |
 | **Display** | Window compositor, desktop environment, framebuffer terminal |
@@ -46,8 +47,8 @@ MerlionOS explores what an operating system looks like when AI is a first-class 
 
 ## Project Status
 
-- **360 source modules**, 132,670 lines of Rust
-- **100 releases** (v1 through v100)
+- **380 source modules**, 139,905 lines of Rust, 45 syscalls
+- **100+ releases** (v1 through v100 and beyond)
 - **480+ shell commands**
 - **4 CPU architectures** (x86_64, aarch64, riscv64, loongarch64)
 - **Optional microkernel mode** with service isolation and hot-restart
